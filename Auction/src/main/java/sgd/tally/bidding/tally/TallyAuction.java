@@ -12,6 +12,6 @@ final public class TallyAuction {
         return new Engine<>(name,
                             TallyBid::new,
                             new TopTwoByComparator<>(TallyBid::compareByFinalBid),
-                            TallyPricing::sold);
+                            TallyBid::winningOffer);
     }
 }

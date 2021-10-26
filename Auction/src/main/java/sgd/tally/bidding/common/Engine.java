@@ -1,6 +1,7 @@
 package sgd.tally.bidding.common;
 
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -20,10 +21,10 @@ final public class Engine<OFFER, BID, WINNINGBID> implements Auction<OFFER, WINN
     private final String name;
     private final Function<OFFER, BID> newBid;
     private TopTwo<BID> topTwo;
-    private final Function<TopTwo<BID>, WINNINGBID> winningBid;
+    private final BiFunction<BID, BID, WINNINGBID> winningBid;
     private boolean isOpen;
 
-    public Engine(String name, Function<OFFER, BID> newBid, TopTwo<BID> topTwo, Function<TopTwo<BID>, WINNINGBID> winningBid) {
+    public Engine(String name, Function<OFFER, BID> newBid, TopTwo<BID> topTwo, BiFunction<BID, BID, WINNINGBID> winningBid) {
         this.name = Objects.requireNonNull(name);
         this.newBid = Objects.requireNonNull(newBid);
         this.topTwo = topTwo;
@@ -42,7 +43,7 @@ final public class Engine<OFFER, BID, WINNINGBID> implements Auction<OFFER, WINN
 
     synchronized public WINNINGBID conclude() {
         isOpen = false;
-        return winningBid.apply(topTwo);
+        return winningBid.apply(topTwo.first(), topTwo.second());
     }
 
     @Override

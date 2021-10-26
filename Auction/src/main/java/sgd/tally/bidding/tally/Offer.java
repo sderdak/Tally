@@ -1,5 +1,8 @@
 package sgd.tally.bidding.tally;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 import static java.lang.String.format;
 
 /**
@@ -14,15 +17,22 @@ import static java.lang.String.format;
  */
 public record Offer(String bidder, int startingBid, int maxBid, int increment) {
     public Offer {
-        if (bidder == null
-                || startingBid < 0
-                || increment <= 0
-                || maxBid < startingBid)
-            throw new IllegalArgumentException(format("bidder:%s startingBid:%d maxBid:%d increment:%d",
-                                                      bidder,
-                                                      startingBid,
-                                                      maxBid,
-                                                      increment));
-
+        var errors = new ArrayList<String>();
+        if (bidder == null) {errors.add("bidder is null");}
+        if (startingBid == 0) {errors.add("startingBid == 0 but must be greater");}
+        if (startingBid < 0) {errors.add("startingBid <0 but must be greater");}
+        if (maxBid < startingBid) {errors.add("maxBid < startingBid but must be greater");}
+        if (increment <= 0) {errors.add("increment is 0 but must be greater");}
+        if (errors.size() > 0) {
+            var args = format("[bidder:%s startingBid:%d maxBid:%d increment:%d] invalid: ",
+                              bidder,
+                              startingBid,
+                              maxBid,
+                              increment);
+            var errmsg = errors.stream().collect(Collectors.joining(", ", "", "."));
+            throw new IllegalArgumentException(args + errmsg);
+        }
     }
+
+
 }

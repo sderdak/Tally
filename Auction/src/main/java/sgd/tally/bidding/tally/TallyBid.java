@@ -35,6 +35,17 @@ final class TallyBid {
         return overcall;
     }
 
+    public static WinningOffer winningOffer(TallyBid first, TallyBid second) {
+        if (first == null) return null;
+        final int effectiveBid;
+        if (second == null) {
+            effectiveBid = first.offer().startingBid();
+        } else {
+            effectiveBid = first.overcall(second);
+        }
+        return new WinningOffer(first.offer(), effectiveBid);
+    }
+
     public int compareByFinalBid(TallyBid other) {return finalBid - other.finalBid;}
 
 }
